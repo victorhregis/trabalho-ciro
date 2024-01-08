@@ -1,0 +1,122 @@
+from tkinter import *
+from tkinter import messagebox
+import pickle
+from evolução import Evolução
+class pokemon_evo():
+    def __init__(self, master=None):
+        self.base = Toplevel()
+        self.base.title("Pokémon Evolução")
+        self.base.geometry("250x430")
+        self.titulo = Label(self.base, text= 'Registrar:', font=('Ariel',12))
+        self.titulo.pack()
+        registra_nome = Frame(self.base,pady= 5)
+        registra_nome.pack()
+        self.nome = Label(registra_nome,text= 'Nome:')
+        self.nome.pack(side=LEFT)
+        self.nome_entry = Entry(registra_nome)
+        self.nome_entry.pack(side=LEFT)
+        registra_tipo1 = Frame(self.base,pady= 5)
+        registra_tipo1.pack()
+        self.tipo1 = Label(registra_tipo1,text= 'Tipo1:')
+        self.tipo1.pack(side=LEFT)
+        self.tipo1_entry = Entry(registra_tipo1)
+        self.tipo1_entry.pack(side=LEFT)
+        registra_tipo2 = Frame(self.base,pady= 5)
+        registra_tipo2.pack()
+        self.tipo2 = Label(registra_tipo2,text= 'Tipo2:')
+        self.tipo2.pack(side=LEFT)
+        self.tipo2_entry = Entry(registra_tipo2)
+        self.tipo2_entry.pack(side=LEFT)
+        registra_habilidade1 = Frame(self.base,pady= 5)
+        registra_habilidade1.pack()
+        self.habilidade1 = Label(registra_habilidade1,text= 'Habilidade:')
+        self.habilidade1.pack(side=LEFT)
+        self.habilidade1_entry = Entry(registra_habilidade1)
+        self.habilidade1_entry.pack(side=LEFT)
+        registra_hp = Frame(self.base,pady= 5)
+        registra_hp.pack()
+        self.hp = Label(registra_hp,text= 'Hp:')
+        self.hp.pack(side=LEFT)
+        self.hp_entry = Entry(registra_hp)
+        self.hp_entry.pack(side=LEFT)
+        registra_attack = Frame(self.base,pady= 5)
+        registra_attack.pack()
+        self.attack = Label(registra_attack,text= 'Attack:')
+        self.attack.pack(side=LEFT)
+        self.attack_entry = Entry(registra_attack)
+        self.attack_entry.pack(side=LEFT)
+        registra_spattack = Frame(self.base,pady= 5)
+        registra_spattack.pack()
+        self.spattack = Label(registra_spattack,text= 'Sp.Attack:')
+        self.spattack.pack(side=LEFT)
+        self.spattack_entry = Entry(registra_spattack)
+        self.spattack_entry.pack(side=LEFT)
+        registra_defense = Frame(self.base,pady= 5)
+        registra_defense.pack()
+        self.defense = Label(registra_defense,text= 'Defense:')
+        self.defense.pack(side=LEFT)
+        self.defense_entry = Entry(registra_defense)
+        self.defense_entry.pack(side=LEFT)
+        registra_spdefense = Frame(self.base,pady= 5)
+        registra_spdefense.pack()
+        self.spdefense = Label(registra_spdefense,text= 'Sp.Defense:')
+        self.spdefense.pack(side=LEFT)
+        self.spdefense_entry = Entry(registra_spdefense)
+        self.spdefense_entry.pack(side=LEFT)
+        registra_speed = Frame(self.base,pady= 5)
+        registra_speed.pack()
+        self.speed = Label(registra_speed,text= 'Speed:')
+        self.speed.pack(side=LEFT)
+        self.speed_entry = Entry(registra_speed)
+        self.speed_entry.pack(side=LEFT)
+        registra_pre_nome = Frame(self.base,pady= 5)
+        registra_pre_nome.pack()
+        self.pre_nome = Label(registra_pre_nome,text= 'Pre nome:')
+        self.pre_nome.pack(side=LEFT)
+        self.pre_nome_entry = Entry(registra_pre_nome)
+        self.pre_nome_entry.pack(side=LEFT)
+        self.botao1 = Button(self.base,text = "Adicionar",height= 1, width=9,command= self.adiciona)
+        self.botao1.pack()
+        self.butao2 = Button(self.base,text='sair',height=1,width=7,command= self.voltar)
+        self.butao2.pack(pady=5)
+
+    def voltar(self):
+        self.base.destroy()
+
+    def adiciona(self):
+        nome = self.nome_entry.get()
+        tipo1 = self.tipo1_entry.get()
+        tipo2 = self.tipo2_entry.get()
+        habilidade1 = self.habilidade1_entry.get()
+        hp = self.hp_entry.get()
+        attack = self.attack_entry.get()
+        spattack = self.spattack_entry.get()
+        defense = self.defense_entry.get()
+        spdefense = self.spdefense_entry.get()
+        speed = self.speed_entry.get()
+        pre_nome = self.pre_nome_entry.get()
+        pokem = Evolução(nome,tipo1,tipo2,habilidade1,hp,attack,spattack,defense,spdefense,speed,pre_nome)
+        try:
+            arquivo = open('Pokemons.txt','rb')
+            retorno = pickle.load(arquivo)
+            cont = 0
+            for pokemon in retorno:
+                if pokem.nome == pokemon.nome:
+                    cont+=1
+                    break
+            if cont == 0:
+                for pre_forma in retorno:
+                    if pre_forma.nome == pokem.pre_nome:
+                        pokem.linha_evo(pre_forma.nomes_ev)
+                        pokem.pre_ev_status(pre_forma.hp,pre_forma.attack,pre_forma.spattack,pre_forma.defense,pre_forma.spdefense,pre_forma.speed)
+                        retorno.insert(retorno.index(pre_forma)+1,pokem)
+                        arquivo = open('Pokemons.txt','wb')
+                        pickle.dump(retorno,arquivo)
+                        messagebox.showinfo('Sucesso','Pokémon registrado com sucesso!')
+                        cont +=1
+                if cont == 0:
+                    messagebox.showerror('Erro','Pre-evolução não foi registrada')
+            else:
+                messagebox.showerror('Erro','Pokémon já foi registrado')
+        except FileNotFoundError:
+            messagebox.showerror('Erro','Nenhum pokémon registrado')

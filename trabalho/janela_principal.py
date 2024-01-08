@@ -21,7 +21,7 @@ class janela():
         mestre.deiconify()
     def regist(self):
         mestre.withdraw()
-        mestre.wait_window(registrar().logar)
+        mestre.wait_window(registrar().registra)
         mestre.deiconify()
 mestre = Tk()
 janela(mestre)
